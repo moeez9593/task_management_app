@@ -25,26 +25,21 @@ const TaskSchema = CollectionSchema(
     r'priority': PropertySchema(
       id: 1,
       name: r'priority',
-      type: IsarType.string,
-    ),
-    r'status': PropertySchema(
-      id: 2,
-      name: r'status',
       type: IsarType.byte,
-      enumMap: _TaskstatusEnumValueMap,
+      enumMap: _TaskpriorityEnumValueMap,
     ),
     r'taskDesc': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'taskDesc',
       type: IsarType.string,
     ),
     r'taskId': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'taskId',
       type: IsarType.string,
     ),
     r'taskTitle': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'taskTitle',
       type: IsarType.string,
     )
@@ -69,7 +64,6 @@ int _taskEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.priority.length * 3;
   bytesCount += 3 + object.taskDesc.length * 3;
   bytesCount += 3 + object.taskId.length * 3;
   bytesCount += 3 + object.taskTitle.length * 3;
@@ -83,11 +77,10 @@ void _taskSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeDateTime(offsets[0], object.dueDate);
-  writer.writeString(offsets[1], object.priority);
-  writer.writeByte(offsets[2], object.status.index);
-  writer.writeString(offsets[3], object.taskDesc);
-  writer.writeString(offsets[4], object.taskId);
-  writer.writeString(offsets[5], object.taskTitle);
+  writer.writeByte(offsets[1], object.priority.index);
+  writer.writeString(offsets[2], object.taskDesc);
+  writer.writeString(offsets[3], object.taskId);
+  writer.writeString(offsets[4], object.taskTitle);
 }
 
 Task _taskDeserialize(
@@ -98,12 +91,11 @@ Task _taskDeserialize(
 ) {
   final object = Task(
     dueDate: reader.readDateTime(offsets[0]),
-    priority: reader.readString(offsets[1]),
-    status: _TaskstatusValueEnumMap[reader.readByteOrNull(offsets[2])] ??
-        TaskStatus.pending,
-    taskDesc: reader.readString(offsets[3]),
-    taskId: reader.readString(offsets[4]),
-    taskTitle: reader.readString(offsets[5]),
+    priority: _TaskpriorityValueEnumMap[reader.readByteOrNull(offsets[1])] ??
+        Priority.low,
+    taskDesc: reader.readString(offsets[2]),
+    taskId: reader.readString(offsets[3]),
+    taskTitle: reader.readString(offsets[4]),
   );
   return object;
 }
@@ -118,30 +110,28 @@ P _taskDeserializeProp<P>(
     case 0:
       return (reader.readDateTime(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (_TaskpriorityValueEnumMap[reader.readByteOrNull(offset)] ??
+          Priority.low) as P;
     case 2:
-      return (_TaskstatusValueEnumMap[reader.readByteOrNull(offset)] ??
-          TaskStatus.pending) as P;
+      return (reader.readString(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
-    case 5:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-const _TaskstatusEnumValueMap = {
-  'pending': 0,
-  'inProgress': 1,
-  'completed': 2,
+const _TaskpriorityEnumValueMap = {
+  'low': 0,
+  'medium': 1,
+  'high': 2,
 };
-const _TaskstatusValueEnumMap = {
-  0: TaskStatus.pending,
-  1: TaskStatus.inProgress,
-  2: TaskStatus.completed,
+const _TaskpriorityValueEnumMap = {
+  0: Priority.low,
+  1: Priority.medium,
+  2: Priority.high,
 };
 
 Id _taskGetId(Task object) {
@@ -336,179 +326,50 @@ extension TaskQueryFilter on QueryBuilder<Task, Task, QFilterCondition> {
   }
 
   QueryBuilder<Task, Task, QAfterFilterCondition> priorityEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      Priority value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'priority',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Task, Task, QAfterFilterCondition> priorityGreaterThan(
-    String value, {
+    Priority value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'priority',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Task, Task, QAfterFilterCondition> priorityLessThan(
-    String value, {
+    Priority value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'priority',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Task, Task, QAfterFilterCondition> priorityBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'priority',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> priorityStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'priority',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> priorityEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'priority',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> priorityContains(String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'priority',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> priorityMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'priority',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> priorityIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'priority',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> priorityIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'priority',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> statusEqualTo(
-      TaskStatus value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'status',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> statusGreaterThan(
-    TaskStatus value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'status',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> statusLessThan(
-    TaskStatus value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'status',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> statusBetween(
-    TaskStatus lower,
-    TaskStatus upper, {
+    Priority lower,
+    Priority upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'status',
+        property: r'priority',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -934,18 +795,6 @@ extension TaskQuerySortBy on QueryBuilder<Task, Task, QSortBy> {
     });
   }
 
-  QueryBuilder<Task, Task, QAfterSortBy> sortByStatus() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'status', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterSortBy> sortByStatusDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'status', Sort.desc);
-    });
-  }
-
   QueryBuilder<Task, Task, QAfterSortBy> sortByTaskDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'taskDesc', Sort.asc);
@@ -1020,18 +869,6 @@ extension TaskQuerySortThenBy on QueryBuilder<Task, Task, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Task, Task, QAfterSortBy> thenByStatus() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'status', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterSortBy> thenByStatusDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'status', Sort.desc);
-    });
-  }
-
   QueryBuilder<Task, Task, QAfterSortBy> thenByTaskDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'taskDesc', Sort.asc);
@@ -1076,16 +913,9 @@ extension TaskQueryWhereDistinct on QueryBuilder<Task, Task, QDistinct> {
     });
   }
 
-  QueryBuilder<Task, Task, QDistinct> distinctByPriority(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Task, Task, QDistinct> distinctByPriority() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'priority', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Task, Task, QDistinct> distinctByStatus() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'status');
+      return query.addDistinctBy(r'priority');
     });
   }
 
@@ -1124,15 +954,9 @@ extension TaskQueryProperty on QueryBuilder<Task, Task, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Task, String, QQueryOperations> priorityProperty() {
+  QueryBuilder<Task, Priority, QQueryOperations> priorityProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'priority');
-    });
-  }
-
-  QueryBuilder<Task, TaskStatus, QQueryOperations> statusProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'status');
     });
   }
 
@@ -1164,8 +988,7 @@ _$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
       taskTitle: json['taskTitle'] as String,
       taskDesc: json['taskDesc'] as String,
       dueDate: DateTime.parse(json['dueDate'] as String),
-      status: $enumDecode(_$TaskStatusEnumMap, json['status']),
-      priority: json['priority'] as String,
+      priority: $enumDecode(_$PriorityEnumMap, json['priority']),
     );
 
 Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
@@ -1174,12 +997,11 @@ Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
       'taskTitle': instance.taskTitle,
       'taskDesc': instance.taskDesc,
       'dueDate': instance.dueDate.toIso8601String(),
-      'status': _$TaskStatusEnumMap[instance.status]!,
-      'priority': instance.priority,
+      'priority': _$PriorityEnumMap[instance.priority]!,
     };
 
-const _$TaskStatusEnumMap = {
-  TaskStatus.pending: 'pending',
-  TaskStatus.inProgress: 'inProgress',
-  TaskStatus.completed: 'completed',
+const _$PriorityEnumMap = {
+  Priority.low: 'low',
+  Priority.medium: 'medium',
+  Priority.high: 'high',
 };

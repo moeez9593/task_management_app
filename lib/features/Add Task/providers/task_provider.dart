@@ -23,14 +23,13 @@ class TaskNotifier extends Notifier<TaskState> {
   }
 
   void addTask(
-      String taskTitle, String taskDesc, DateTime dueDate, String priority) {
+      String taskTitle, String taskDesc, DateTime dueDate, Priority priority) {
     var taskId = const Uuid().v4();
     final task = Task(
         taskId: taskId,
         taskTitle: taskTitle,
         taskDesc: taskDesc,
         dueDate: dueDate,
-        status: TaskStatus.pending,
         priority: priority);
     state = state.copyWith(taskList: [...state.taskList, task]);
     IsarService().addTask(task); // Pass the entire task object
@@ -56,8 +55,8 @@ class TaskNotifier extends Notifier<TaskState> {
   }
 
   void fetchAllTasks() async {
-    final taskList = await IsarService().loadAllTodos();
-    state = state.copyWith(taskList: taskList);
+    final tasks = await IsarService().loadAllTodos();
+    state = state.copyWith(taskList: tasks);
   }
 }
 
