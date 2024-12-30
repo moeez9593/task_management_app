@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/constants/ui_contants.dart';
 import 'package:task_management_app/features/Add%20Task/providers/task_provider.dart';
 import 'package:task_management_app/features/Home/widgets/task_card_widget.dart';
-import 'package:task_management_app/router/app_router.gr.dart';
+import 'package:task_management_app/router/app_router.dart';
+
 
 @RoutePage()
 class HomeScreen extends ConsumerStatefulWidget {

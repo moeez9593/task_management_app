@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/constants/extension_constants.dart';
 import 'package:task_management_app/model/task/task.dart';
-import 'package:task_management_app/router/app_router.gr.dart';
+import 'package:task_management_app/router/app_router.dart';
 import 'package:task_management_app/theme/app_colors.dart';
 
 class TaskCardWidget extends ConsumerStatefulWidget {

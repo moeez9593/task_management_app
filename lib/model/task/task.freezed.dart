@@ -24,7 +24,6 @@ mixin _$Task {
   String get taskTitle => throw _privateConstructorUsedError;
   String get taskDesc => throw _privateConstructorUsedError;
   DateTime get dueDate => throw _privateConstructorUsedError;
-  @enumerated
   Priority get priority => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,7 +41,7 @@ abstract class $TaskCopyWith<$Res> {
       String taskTitle,
       String taskDesc,
       DateTime dueDate,
-      @enumerated Priority priority});
+      Priority priority});
 }
 
 /// @nodoc
@@ -101,7 +100,7 @@ abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
       String taskTitle,
       String taskDesc,
       DateTime dueDate,
-      @enumerated Priority priority});
+      Priority priority});
 }
 
 /// @nodoc
@@ -147,14 +146,13 @@ class __$$TaskImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$TaskImpl extends _Task {
+class _$TaskImpl implements _Task {
   _$TaskImpl(
       {required this.taskId,
       required this.taskTitle,
       required this.taskDesc,
       required this.dueDate,
-      @enumerated required this.priority})
-      : super._();
+      required this.priority});
 
   factory _$TaskImpl.fromJson(Map<String, dynamic> json) =>
       _$$TaskImplFromJson(json);
@@ -168,7 +166,6 @@ class _$TaskImpl extends _Task {
   @override
   final DateTime dueDate;
   @override
-  @enumerated
   final Priority priority;
 
   @override
@@ -210,14 +207,13 @@ class _$TaskImpl extends _Task {
   }
 }
 
-abstract class _Task extends Task {
+abstract class _Task implements Task {
   factory _Task(
       {required final String taskId,
       required final String taskTitle,
       required final String taskDesc,
       required final DateTime dueDate,
-      @enumerated required final Priority priority}) = _$TaskImpl;
-  _Task._() : super._();
+      required final Priority priority}) = _$TaskImpl;
 
   factory _Task.fromJson(Map<String, dynamic> json) = _$TaskImpl.fromJson;
 
@@ -230,7 +226,6 @@ abstract class _Task extends Task {
   @override
   DateTime get dueDate;
   @override
-  @enumerated
   Priority get priority;
   @override
   @JsonKey(ignore: true)

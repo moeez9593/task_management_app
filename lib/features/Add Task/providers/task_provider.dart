@@ -1,10 +1,11 @@
+import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/features/Add%20Task/repository/database_repo.dart'; // Adjust path as needed
 import 'package:task_management_app/model/task/task.dart'; // Adjust path as needed
 import 'package:uuid/uuid.dart';
 
 class TaskState {
-  List<Task> taskList;
+  List<TaskModelCompanion> taskList;
   DateTime selectedDate; 
   Priority priority; 
   String title; 
@@ -17,7 +18,7 @@ class TaskState {
     required this.desc
   });
 
-  TaskState copyWith({List<Task>? taskList, DateTime? selectedDate, Priority? priority, String? title, String? desc}) {
+  TaskState copyWith({List<TaskModelCompanion>? taskList, DateTime? selectedDate, Priority? priority, String? title, String? desc}) {
     return TaskState(
       taskList: taskList ?? this.taskList,
       selectedDate: selectedDate ?? this.selectedDate,
@@ -47,37 +48,43 @@ class TaskNotifier extends Notifier<TaskState> {
   void addTask() {
     var taskId = const Uuid().v4();
     final newTask = Task(
-        taskId: taskId,
-        taskTitle: state.title,
-        taskDesc: state.desc,
-        dueDate: state.selectedDate,
-        priority: state.priority);
+        taskId: Value(taskId),
+        taskTitle: Value(state.title),
+        taskDesc: Value(state.desc),
+        dueDate: Value(state.selectedDate),
+        priority: null
+        );
 
         
+
     state = state.copyWith(taskList: [...state.taskList, newTask]);
-    IsarService().addTask(newTask); 
+    AppDatabase().addTask(newTask); 
   }
 
-  void updateTask(Task task) {
-    final index = state.taskList.indexWhere((t) => t.taskId == task.taskId);
-    if (index != -1) {
-      state.taskList[index] = task;
-      state = state.copyWith(taskList: [...state.taskList]);
-      IsarService().updateTodo(
-          task.taskId, task); 
-    }
-  }
+  // void updateTask(Task task) {
+  //   final index = state.taskList.indexWhere((t) => t.taskId == task.taskId);
+  //   if (index != -1) {
+  //     state.taskList[index] = task;
+  //     state = state.copyWith(taskList: [...state.taskList]);
+  //     IsarService().updateTodo(
+  //         task.taskId, task); 
+  //   }
+  // }
 
-  void deleteTask(String taskId) {
-    state = state.copyWith(
-      taskList: state.taskList.where((task) => task.taskId != taskId).toList(),
-    );
+  // void deleteTask(String taskId) {
+  //   state = state.copyWith(
+  //     taskList: state.taskList.where((task) => task.taskId != taskId).toList(),
+  //   );
 
-    IsarService().deleteTodo(taskId);
-  }
+  //   IsarService().deleteTodo(taskId);
+  // }
 
   void fetchAllTasks() async {
-    final tasks = await IsarService().loadAllTodos();
+    final tasks = await AppDatabase().loadAllTasks();
+
+   
+  
+
     state = state.copyWith(taskList: tasks);
   }
   
