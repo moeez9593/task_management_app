@@ -1,5 +1,8 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:task_management_app/features/Add%20Task/repository/database_repo.dart';
+import 'package:task_management_app/model/task/task.dart';
 import 'package:task_management_app/theme/app_colors.dart';
 
 extension BuildContextExtensions on BuildContext {
@@ -44,4 +47,30 @@ extension DateTimeFormatting on DateTime {
 extension StringCasingExtension on String {
   String get toCapitalized => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
   String get toTitleCase => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized).join(' ');
+}
+
+
+
+extension TaskToCompanion on Task {
+  TaskModelCompanion toCompanion () {
+    return TaskModelCompanion(
+      taskId: Value(taskId),
+      taskTitle: Value(taskTitle),
+      taskDesc: Value(taskDesc), 
+      dueDate: Value(dueDate), 
+      status: Value(priority),
+    );
+  }
+}
+
+
+
+extension TaskDataListToTaskList on List <TaskModelData> {
+  List<Task> toTaskList () {
+    return map((taskData){
+      return Task(taskId: taskData.taskId, taskTitle: taskData.taskTitle, taskDesc: taskData.taskDesc, dueDate: taskData.dueDate, priority: taskData.status
+        
+      );
+    }).toList(); 
+  }
 }

@@ -69,19 +69,17 @@
 // }
 
 
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:task_management_app/model/task/task.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:task_management_app/model/task/task.dart';
 
 part 'database_repo.g.dart';
 
 
 @DriftDatabase(tables: [TaskModel])
 class AppDatabase extends _$AppDatabase {
-   AppDatabase() : super(_openConnection());
+  static AppDatabase instance() => AppDatabase();
+  AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
