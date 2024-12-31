@@ -6,25 +6,29 @@ import 'package:uuid/uuid.dart';
 
 class TaskState {
   List<Task> taskList;
+  List<Task> filteredTaskList; 
   DateTime selectedDate; 
   Priority priority; 
   String title; 
   String desc; 
+  
   TaskState({
     required this.taskList,
     required this.selectedDate, 
     required this.priority, 
     required this.title, 
-    required this.desc
+    required this.desc, 
+    required this.filteredTaskList
   });
 
-  TaskState copyWith({List<Task>? taskList, DateTime? selectedDate, Priority? priority, String? title, String? desc}) {
+  TaskState copyWith({List<Task>? taskList, DateTime? selectedDate, Priority? priority, String? title, String? desc, List<Task>? filteredTaskList}) {
     return TaskState(
       taskList: taskList ?? this.taskList,
       selectedDate: selectedDate ?? this.selectedDate,
       priority: priority ?? this.priority, 
       title: title ?? this.title,
-      desc: desc ?? this.desc
+      desc: desc ?? this.desc,
+      filteredTaskList: filteredTaskList??this.filteredTaskList
       );
   }
 
@@ -34,7 +38,8 @@ class TaskState {
       selectedDate: DateTime.now(), 
       priority: Priority.low, 
       title: '',
-      desc: ''
+      desc: '',
+      filteredTaskList: []
       );
   }
 }
@@ -49,18 +54,18 @@ class TaskNotifier extends Notifier<TaskState> {
     var taskId = const Uuid().v4();
     final newTask = Task(taskId: taskId, taskTitle: state.title, taskDesc: state.desc, dueDate: state.selectedDate, priority: state.priority);
 
-    state = state.copyWith(taskList: [...state.taskList, newTask]);
+    state = state.copyWith(taskList: [...state.filteredTaskList, newTask]);
     AppDatabase().addTask(newTask.toCompanion()); 
 
   }
 
   void updateTask(Task task) {
-    final index = state.taskList.indexWhere((t)=>t.taskId==task.taskId);
-    final newTaskList = state.taskList.toList();
+    final index = state.filteredTaskList.indexWhere((t)=>t.taskId==task.taskId);
+    final newTaskList = state.filteredTaskList.toList();
 
     newTaskList[index] = task; 
 
-    state = state.copyWith(taskList: newTaskList);
+    state = state.copyWith(filteredTaskList: newTaskList);
 
 
     AppDatabase().updateTask(task); 
@@ -68,17 +73,17 @@ class TaskNotifier extends Notifier<TaskState> {
   }
 
   void deleteTask(Task task) {
-    int index = state.taskList.indexOf(task);
-    final deletedTaskListItem = state.taskList.toList(); 
+    int index = state.filteredTaskList.indexOf(task);
+    final deletedTaskListItem = state.filteredTaskList.toList(); 
     deletedTaskListItem.removeAt(index); 
-    state = state.copyWith(taskList: deletedTaskListItem); 
+    state = state.copyWith(filteredTaskList: deletedTaskListItem); 
 
     AppDatabase().deleteTask(task.taskId); 
   }
 
   void fetchAllTasks() async {
     final tasks = await AppDatabase().loadAllTasks();
-    state = state.copyWith(taskList: tasks.toTaskList());
+    state = state.copyWith(taskList: tasks.toTaskList(), filteredTaskList: tasks.toTaskList());
   }
   
   void onDateSelected (DateTime date)
@@ -95,7 +100,8 @@ class TaskNotifier extends Notifier<TaskState> {
   {
      state = state.copyWith(
       title: title, 
-      desc: desc);
+      desc: desc
+    );
   }
 
   void resetFieldsOnScreenLaunch ()
@@ -106,6 +112,12 @@ class TaskNotifier extends Notifier<TaskState> {
       selectedDate: DateTime.now(),
       priority: Priority.high
     ); 
+  }
+
+
+  void setTaskList (List<Task> tasks) 
+  {
+    state = state.copyWith(filteredTaskList: tasks); 
   }
 
 

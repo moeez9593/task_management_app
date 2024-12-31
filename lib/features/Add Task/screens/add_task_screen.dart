@@ -136,11 +136,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Task task = Task(taskId: '', 
-                // taskTitle: taskTitleController.text, 
-                // taskDesc: taskDescriptionController.text, 
-                // dueDate: selectedDate, 
-                // priority: selectedOption??Priority.low);
+               
 
                 
                 if (widget.task!=null)
@@ -148,7 +144,8 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                   final updatedTask = Task(taskId: widget.task!.taskId, taskTitle: taskTitleController.text, taskDesc: taskDescriptionController.text, dueDate: selectedDate, priority: selectedOption);
                   ref.read(taskProvider.notifier).updateTask(updatedTask);
                 } 
-                else {
+                else 
+                {
                 ref.read(taskProvider.notifier).setTaskTitleAndDescription(taskTitleController.text, taskDescriptionController.text);
                 ref.read(taskProvider.notifier).addTask();
                 }
