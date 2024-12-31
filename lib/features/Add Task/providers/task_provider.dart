@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/constants/extension_constants.dart';
 import 'package:task_management_app/features/Add%20Task/repository/database_repo.dart'; // Adjust path as needed
+import 'package:task_management_app/features/Home/providers/home_provider.dart';
 import 'package:task_management_app/model/task/task.dart'; // Adjust path as needed
 import 'package:uuid/uuid.dart';
 
@@ -51,10 +52,12 @@ class TaskNotifier extends Notifier<TaskState> {
   }
 
   void addTask() {
+    ref.read(homeProvider.notifier).setFilterValue(4); 
     var taskId = const Uuid().v4();
     final newTask = Task(taskId: taskId, taskTitle: state.title, taskDesc: state.desc, dueDate: state.selectedDate, priority: state.priority);
-
     state = state.copyWith(taskList: [...state.filteredTaskList, newTask]);
+    setTaskList(state.taskList);
+
     AppDatabase().addTask(newTask.toCompanion()); 
 
   }

@@ -102,14 +102,12 @@ class AppDatabase extends _$AppDatabase {
     return tasks; 
   }
 
-  Future<void> deleteTask(String taskId) async {
+  Future<void> deleteTask(String taskId) async 
+  {
     await (delete(taskModel)..where((t) => t.taskId.equals(taskId))).go();
   }
 
   Future<void> updateTask(Task task) async {
     await (update(taskModel)..where((t) => t.taskId.equals(task.taskId))).write(task.toCompanion());
   }
-
-
-
 }

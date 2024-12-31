@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/constants/data_constants.dart';
 import 'package:task_management_app/features/Add%20Task/providers/task_provider.dart';
+import 'package:task_management_app/features/Home/providers/home_provider.dart';
 import 'package:task_management_app/model/task/task.dart';
 
 @RoutePage()
@@ -146,8 +147,9 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                 } 
                 else 
                 {
-                ref.read(taskProvider.notifier).setTaskTitleAndDescription(taskTitleController.text, taskDescriptionController.text);
-                ref.read(taskProvider.notifier).addTask();
+                 
+                  ref.read(taskProvider.notifier).setTaskTitleAndDescription(taskTitleController.text, taskDescriptionController.text);
+                  ref.read(taskProvider.notifier).addTask();
                 }
                 context.maybePop(); 
 

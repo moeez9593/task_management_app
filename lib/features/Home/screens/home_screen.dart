@@ -22,6 +22,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(taskProvider.notifier).fetchAllTasks();
+      ref.read(homeProvider.notifier).setFilterValue(4); 
     });
   }
 
@@ -37,10 +38,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           PopupMenuButton(
             icon: const Icon(Icons.filter_alt)
             ,itemBuilder: (context)=>[
-            const PopupMenuItem(value: 1, child: Text("High")),
-            const PopupMenuItem(value: 2, child: Text("Medium")),
-            const PopupMenuItem(value: 3, child: Text("Low")), 
-            const PopupMenuItem(value: 4, child: Text("Show all tasks"))
+            PopupMenuItem(value: 1, child: Row(
+              children: [
+                if (filterValue==1)
+                const Icon(Icons.check),
+                const SizedBox(width: 10,), 
+                const Text("High"),
+              ],
+            )),
+            PopupMenuItem(value: 2, child: Row(
+              children: [
+                if(filterValue==2)
+                const Icon(Icons.check),
+                const SizedBox(width: 10,), 
+                const Text("Medium"),
+              ],
+            )),
+            PopupMenuItem(value: 3, child: Row(
+              children: [
+                if (filterValue==3)
+                const Icon(Icons.check),
+                const SizedBox(width: 10,), 
+                const Text("Low"),
+              ],
+            )), 
+            PopupMenuItem(value: 4, child: Row(
+              children: [
+                if (filterValue==4)
+                const Icon(Icons.check),
+                const SizedBox(width: 10,), 
+                const Text("Show all tasks"),
+              ],
+            ))
           ],
           onSelected: (value) {
             ref.read(homeProvider.notifier).setFilterValue(value); 
