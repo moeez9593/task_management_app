@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:task_management_app/features/Add%20Task/repository/database_repo.dart';
+import 'package:task_management_app/model/project/project.dart';
+import 'package:task_management_app/repository/database_repo.dart';
 import 'package:task_management_app/model/task/task.dart';
 import 'package:task_management_app/theme/app_colors.dart';
 
@@ -59,16 +60,42 @@ extension TaskToCompanion on Task {
       taskDesc: Value(taskDesc), 
       dueDate: Value(dueDate), 
       status: Value(priority),
+    ); 
+  }
+}
+
+
+
+extension ProjectToCompanion on Project {
+  ProjectModelCompanion toCompanion () {
+    return ProjectModelCompanion(
+     projectId: Value(projectId), 
+     projectTitle: Value(projectTitle)
     );
   }
 }
 
 
 
+
+extension ProjectDataListToProjectList on List<ProjectModelData> {
+  List<Project> toProjectList () {
+    return map((projectData){
+      return Project(projectId: projectData.projectId, projectTitle:projectData.projectTitle
+        
+      );
+    }).toList(); 
+  }
+}
+
+
+
+
+
 extension TaskDataListToTaskList on List <TaskModelData> {
   List<Task> toTaskList () {
     return map((taskData){
-      return Task(taskId: taskData.taskId, taskTitle: taskData.taskTitle, taskDesc: taskData.taskDesc, dueDate: taskData.dueDate, priority: taskData.status
+      return Task(taskId: taskData.taskId, taskTitle: taskData.taskTitle, taskDesc: taskData.taskDesc, dueDate: taskData.dueDate, priority: taskData.status, projectId: taskData.projectId
         
       );
     }).toList(); 

@@ -28,6 +28,7 @@
 import 'package:drift/drift.dart' as drift;
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:task_management_app/model/project/project.dart';
 
 part 'task.freezed.dart';
 part 'task.g.dart';
@@ -39,9 +40,9 @@ abstract class Task with _$Task {
     required String taskTitle,
     required String taskDesc,
     required DateTime dueDate,
-    required Priority priority
+    required Priority priority, 
+    required String projectId,
 
-  
 }) = _Task;
    factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
 }
@@ -53,6 +54,8 @@ class TaskModel extends drift.Table {
   drift.TextColumn get taskDesc => text()(); 
   drift.DateTimeColumn get dueDate => dateTime()(); 
   drift.IntColumn get status => intEnum<Priority>()();
+  drift.TextColumn get projectId => text().references(ProjectModel, #projectId)();
+
 }
 
 

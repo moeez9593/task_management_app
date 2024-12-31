@@ -25,6 +25,7 @@ mixin _$Task {
   String get taskDesc => throw _privateConstructorUsedError;
   DateTime get dueDate => throw _privateConstructorUsedError;
   Priority get priority => throw _privateConstructorUsedError;
+  String get projectId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -41,7 +42,8 @@ abstract class $TaskCopyWith<$Res> {
       String taskTitle,
       String taskDesc,
       DateTime dueDate,
-      Priority priority});
+      Priority priority,
+      String projectId});
 }
 
 /// @nodoc
@@ -62,6 +64,7 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
     Object? taskDesc = null,
     Object? dueDate = null,
     Object? priority = null,
+    Object? projectId = null,
   }) {
     return _then(_value.copyWith(
       taskId: null == taskId
@@ -84,6 +87,10 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
           ? _value.priority
           : priority // ignore: cast_nullable_to_non_nullable
               as Priority,
+      projectId: null == projectId
+          ? _value.projectId
+          : projectId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -100,7 +107,8 @@ abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
       String taskTitle,
       String taskDesc,
       DateTime dueDate,
-      Priority priority});
+      Priority priority,
+      String projectId});
 }
 
 /// @nodoc
@@ -118,6 +126,7 @@ class __$$TaskImplCopyWithImpl<$Res>
     Object? taskDesc = null,
     Object? dueDate = null,
     Object? priority = null,
+    Object? projectId = null,
   }) {
     return _then(_$TaskImpl(
       taskId: null == taskId
@@ -140,6 +149,10 @@ class __$$TaskImplCopyWithImpl<$Res>
           ? _value.priority
           : priority // ignore: cast_nullable_to_non_nullable
               as Priority,
+      projectId: null == projectId
+          ? _value.projectId
+          : projectId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -152,7 +165,8 @@ class _$TaskImpl implements _Task {
       required this.taskTitle,
       required this.taskDesc,
       required this.dueDate,
-      required this.priority});
+      required this.priority,
+      required this.projectId});
 
   factory _$TaskImpl.fromJson(Map<String, dynamic> json) =>
       _$$TaskImplFromJson(json);
@@ -167,10 +181,12 @@ class _$TaskImpl implements _Task {
   final DateTime dueDate;
   @override
   final Priority priority;
+  @override
+  final String projectId;
 
   @override
   String toString() {
-    return 'Task(taskId: $taskId, taskTitle: $taskTitle, taskDesc: $taskDesc, dueDate: $dueDate, priority: $priority)';
+    return 'Task(taskId: $taskId, taskTitle: $taskTitle, taskDesc: $taskDesc, dueDate: $dueDate, priority: $priority, projectId: $projectId)';
   }
 
   @override
@@ -185,13 +201,15 @@ class _$TaskImpl implements _Task {
                 other.taskDesc == taskDesc) &&
             (identical(other.dueDate, dueDate) || other.dueDate == dueDate) &&
             (identical(other.priority, priority) ||
-                other.priority == priority));
+                other.priority == priority) &&
+            (identical(other.projectId, projectId) ||
+                other.projectId == projectId));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, taskId, taskTitle, taskDesc, dueDate, priority);
+  int get hashCode => Object.hash(
+      runtimeType, taskId, taskTitle, taskDesc, dueDate, priority, projectId);
 
   @JsonKey(ignore: true)
   @override
@@ -213,7 +231,8 @@ abstract class _Task implements Task {
       required final String taskTitle,
       required final String taskDesc,
       required final DateTime dueDate,
-      required final Priority priority}) = _$TaskImpl;
+      required final Priority priority,
+      required final String projectId}) = _$TaskImpl;
 
   factory _Task.fromJson(Map<String, dynamic> json) = _$TaskImpl.fromJson;
 
@@ -227,6 +246,8 @@ abstract class _Task implements Task {
   DateTime get dueDate;
   @override
   Priority get priority;
+  @override
+  String get projectId;
   @override
   @JsonKey(ignore: true)
   _$$TaskImplCopyWith<_$TaskImpl> get copyWith =>

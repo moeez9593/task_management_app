@@ -72,12 +72,13 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:task_management_app/constants/extension_constants.dart';
+import 'package:task_management_app/model/project/project.dart';
 import 'package:task_management_app/model/task/task.dart';
 
 part 'database_repo.g.dart';
 
 
-@DriftDatabase(tables: [TaskModel])
+@DriftDatabase(tables: [TaskModel, ProjectModel])
 class AppDatabase extends _$AppDatabase {
   static final _instance = AppDatabase._internal();
   factory AppDatabase() => _instance; 
@@ -108,6 +109,18 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> updateTask(Task task) async {
     await (update(taskModel)..where((t) => t.taskId.equals(task.taskId))).write(task.toCompanion());
+  }
+
+
+  Future<int> addProject (ProjectModelCompanion project) 
+  {
+    return into(projectModel).insert(project);
+  }
+
+  Future<List<ProjectModelData>> loadAllProjects () async
+  {
+    final List<ProjectModelData> tasks = await projectModel.all().get(); 
+    return tasks; 
   }
 
 

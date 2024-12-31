@@ -141,7 +141,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                 
                 if (widget.task!=null)
                 {
-                  final updatedTask = Task(taskId: widget.task!.taskId, taskTitle: taskTitleController.text, taskDesc: taskDescriptionController.text, dueDate: selectedDate, priority: selectedOption);
+                  final updatedTask = Task(taskId: widget.task!.taskId, taskTitle: taskTitleController.text, taskDesc: taskDescriptionController.text, dueDate: selectedDate, priority: selectedOption, projectId: widget.task!.projectId);
                   ref.read(taskProvider.notifier).updateTask(updatedTask);
                 } 
                 else 

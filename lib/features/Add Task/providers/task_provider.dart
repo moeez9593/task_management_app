@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/constants/extension_constants.dart';
-import 'package:task_management_app/features/Add%20Task/repository/database_repo.dart'; // Adjust path as needed
+import 'package:task_management_app/repository/database_repo.dart'; // Adjust path as needed
 import 'package:task_management_app/model/task/task.dart'; // Adjust path as needed
 import 'package:uuid/uuid.dart';
 
@@ -11,8 +11,10 @@ class TaskState {
   Priority priority; 
   String title; 
   String desc; 
+  String projectId; 
   
   TaskState({
+    required this.projectId, 
     required this.taskList,
     required this.selectedDate, 
     required this.priority, 
@@ -21,8 +23,9 @@ class TaskState {
     required this.filteredTaskList
   });
 
-  TaskState copyWith({List<Task>? taskList, DateTime? selectedDate, Priority? priority, String? title, String? desc, List<Task>? filteredTaskList}) {
+  TaskState copyWith({String? projectId ,List<Task>? taskList, DateTime? selectedDate, Priority? priority, String? title, String? desc, List<Task>? filteredTaskList}) {
     return TaskState(
+      projectId: projectId ?? this.projectId,
       taskList: taskList ?? this.taskList,
       selectedDate: selectedDate ?? this.selectedDate,
       priority: priority ?? this.priority, 
@@ -34,6 +37,7 @@ class TaskState {
 
   factory TaskState.initial() {
     return TaskState(
+      projectId: '',
       taskList: [], 
       selectedDate: DateTime.now(), 
       priority: Priority.low, 
@@ -52,11 +56,10 @@ class TaskNotifier extends Notifier<TaskState> {
 
   void addTask() {
     var taskId = const Uuid().v4();
-    final newTask = Task(taskId: taskId, taskTitle: state.title, taskDesc: state.desc, dueDate: state.selectedDate, priority: state.priority);
+    final newTask = Task(taskId: taskId, taskTitle: state.title, taskDesc: state.desc, dueDate: state.selectedDate, priority: state.priority, projectId: state.projectId, );
 
     state = state.copyWith(taskList: [...state.filteredTaskList, newTask]);
     AppDatabase().addTask(newTask.toCompanion()); 
-
   }
 
   void updateTask(Task task) {

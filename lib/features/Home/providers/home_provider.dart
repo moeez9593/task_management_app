@@ -19,7 +19,7 @@ class HomeState {
 class HomeNotifier extends Notifier<HomeState> {
   @override
   HomeState build() {
-    // TODO: implement build
+    
     return HomeState.initial();
   }
 
