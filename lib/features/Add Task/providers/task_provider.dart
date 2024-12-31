@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/constants/extension_constants.dart';
 import 'package:task_management_app/features/Add%20Task/repository/database_repo.dart'; // Adjust path as needed
@@ -55,23 +54,27 @@ class TaskNotifier extends Notifier<TaskState> {
 
   }
 
-  // void updateTask(Task task) {
-  //   final index = state.taskList.indexWhere((t) => t.taskId == task.taskId);
-  //   if (index != -1) {
-  //     state.taskList[index] = task;
-  //     state = state.copyWith(taskList: [...state.taskList]);
-  //     IsarService().updateTodo(
-  //         task.taskId, task); 
-  //   }
-  // }
+  void updateTask(Task task) {
+    final index = state.taskList.indexWhere((t)=>t.taskId==task.taskId);
+    final newTaskList = state.taskList.toList();
 
-  // void deleteTask(String taskId) {
-  //   state = state.copyWith(
-  //     taskList: state.taskList.where((task) => task.taskId != taskId).toList(),
-  //   );
+    newTaskList[index] = task; 
 
-  //   IsarService().deleteTodo(taskId);
-  // }
+    state = state.copyWith(taskList: newTaskList);
+
+
+    AppDatabase().updateTask(task); 
+    
+  }
+
+  void deleteTask(Task task) {
+    int index = state.taskList.indexOf(task);
+    final deletedTaskListItem = state.taskList.toList(); 
+    deletedTaskListItem.removeAt(index); 
+    state = state.copyWith(taskList: deletedTaskListItem); 
+
+    AppDatabase().deleteTask(task.taskId); 
+  }
 
   void fetchAllTasks() async {
     final tasks = await AppDatabase().loadAllTasks();

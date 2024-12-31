@@ -31,13 +31,19 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   void initState() {
 
     WidgetsBinding.instance.addPostFrameCallback((_){
-      ref.read(taskProvider.notifier).resetFieldsOnScreenLaunch();
-
-      
-
-    }); 
-
    
+      if (widget.task!=null)
+      {
+      taskTitleController.text = widget.task!.taskTitle;
+      taskDescriptionController.text = widget.task!.taskDesc;
+      ref.read(taskProvider.notifier).onDateSelected(widget.task!.dueDate);
+      ref.read(taskProvider.notifier).onOptionSelected(widget.task!.priority);
+      }
+    else 
+    {
+         ref.read(taskProvider.notifier).resetFieldsOnScreenLaunch();
+    }
+  }); 
     super.initState();
   }
 
@@ -136,9 +142,16 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                 // dueDate: selectedDate, 
                 // priority: selectedOption??Priority.low);
 
-                ref.read(taskProvider.notifier).setTaskTitleAndDescription(taskTitleController.text, taskDescriptionController.text); 
+                
+                if (widget.task!=null)
+                {
+                  final updatedTask = Task(taskId: widget.task!.taskId, taskTitle: taskTitleController.text, taskDesc: taskDescriptionController.text, dueDate: selectedDate, priority: selectedOption);
+                  ref.read(taskProvider.notifier).updateTask(updatedTask);
+                } 
+                else {
+                ref.read(taskProvider.notifier).setTaskTitleAndDescription(taskTitleController.text, taskDescriptionController.text);
                 ref.read(taskProvider.notifier).addTask();
-
+                }
                 context.maybePop(); 
 
                 

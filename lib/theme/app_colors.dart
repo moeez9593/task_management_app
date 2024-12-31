@@ -9,4 +9,5 @@ class AppColors {
 
    //task card widget 
    static const titleColor = Colors.blueAccent; 
+   static const deleteColor = Colors.redAccent;
 }

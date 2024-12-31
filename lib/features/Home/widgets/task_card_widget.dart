@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/constants/extension_constants.dart';
+import 'package:task_management_app/features/Add%20Task/providers/task_provider.dart';
 import 'package:task_management_app/model/task/task.dart';
 import 'package:task_management_app/router/app_router.dart';
 import 'package:task_management_app/theme/app_colors.dart';
@@ -28,20 +29,44 @@ class _TaskCardWidgetState extends ConsumerState<TaskCardWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.task.taskTitle.toTitleCase, style: context.textTheme.titleMedium?.copyWith(color: AppColors.titleColor),), 
-                IconButton(onPressed: (){
-                  
-                  context.router.push(AddTaskRoute(task: widget.task)); 
-                  
-
-                }, icon: const Icon(Icons.edit_outlined, color: AppColors.titleColor,))
+                Text(
+                  widget.task.taskTitle.toTitleCase,
+                  style: context.textTheme.titleMedium
+                      ?.copyWith(color: AppColors.titleColor),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          context.router.push(AddTaskRoute(task: widget.task));
+                        },
+                        icon: const Icon(
+                          Icons.edit_outlined,
+                          color: AppColors.titleColor,
+                        )),
+                    IconButton(
+                        onPressed: () {
+                          ref.read(taskProvider.notifier).deleteTask(widget.task);
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          color: AppColors.deleteColor,
+                        ))
+                  ],
+                ),
               ],
-            ) , 
-
+            ),
             Row(
               children: [
-                const Icon(Icons.timer_outlined, color: AppColors.titleColor,size: 17,), 
-                Text(" ${widget.task.dueDate.toMMMDD()}", style: context.textTheme.bodyMedium?.copyWith(fontSize: 13),)
+                const Icon(
+                  Icons.timer_outlined,
+                  color: AppColors.titleColor,
+                  size: 17,
+                ),
+                Text(
+                  " ${widget.task.dueDate.toMMMDD()}",
+                  style: context.textTheme.bodyMedium?.copyWith(fontSize: 13),
+                )
               ],
             )
           ],

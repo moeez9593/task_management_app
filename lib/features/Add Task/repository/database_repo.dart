@@ -71,6 +71,7 @@
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:task_management_app/constants/extension_constants.dart';
 import 'package:task_management_app/model/task/task.dart';
 
 part 'database_repo.g.dart';
@@ -78,8 +79,10 @@ part 'database_repo.g.dart';
 
 @DriftDatabase(tables: [TaskModel])
 class AppDatabase extends _$AppDatabase {
-  static AppDatabase instance() => AppDatabase();
-  AppDatabase() : super(_openConnection());
+  static final _instance = AppDatabase._internal();
+  factory AppDatabase() => _instance; 
+
+  AppDatabase._internal() : super(_openConnection()); 
 
   @override
   int get schemaVersion => 1;
@@ -93,16 +96,19 @@ class AppDatabase extends _$AppDatabase {
     return into(taskModel).insert(task);
   }
 
-
   Future<List<TaskModelData>> loadAllTasks () async
   {
     final List<TaskModelData> tasks = await taskModel.all().get(); 
     return tasks; 
   }
 
+  Future<void> deleteTask(String taskId) async {
+    await (delete(taskModel)..where((t) => t.taskId.equals(taskId))).go();
+  }
 
-  
-
+  Future<void> updateTask(Task task) async {
+    await (update(taskModel)..where((t) => t.taskId.equals(task.taskId))).write(task.toCompanion());
+  }
 
 
 
