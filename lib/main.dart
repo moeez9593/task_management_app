@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:task_management_app/features/Home/screens/home_screen.dart';
-import 'package:task_management_app/router/app_routes.dart';
+import 'package:task_management_app/router/app_router.dart';
 
+final appRouter = AppRouter();
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerConfig: appRouter,
+      routerConfig: appRouter.config(),
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

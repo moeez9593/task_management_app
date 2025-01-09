@@ -1,10 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_management_app/constants/extension_constants.dart';
+import 'package:task_management_app/model/task/task.dart';
+import 'package:task_management_app/router/app_router.gr.dart';
+import 'package:task_management_app/theme/app_colors.dart';
 
 class TaskCardWidget extends ConsumerStatefulWidget {
-  const TaskCardWidget({super.key, required this.title});
+  const TaskCardWidget({super.key, required this.task});
 
-  final String title;
+  final Task task;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _TaskCardWidgetState();
@@ -14,8 +19,33 @@ class _TaskCardWidgetState extends ConsumerState<TaskCardWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
-        children: [Text(widget.title)],
+      color: AppColors.titleColor.withOpacity(0.08),
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(widget.task.taskTitle.toTitleCase, style: context.textTheme.titleMedium?.copyWith(color: AppColors.titleColor),), 
+                IconButton(onPressed: (){
+                  
+                  context.router.push(AddTaskRoute(task: widget.task)); 
+                  
+
+                }, icon: const Icon(Icons.edit_outlined, color: AppColors.titleColor,))
+              ],
+            ) , 
+
+            Row(
+              children: [
+                const Icon(Icons.timer_outlined, color: AppColors.titleColor,size: 17,), 
+                Text(" ${widget.task.dueDate.toMMMDD()}", style: context.textTheme.bodyMedium?.copyWith(fontSize: 13),)
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

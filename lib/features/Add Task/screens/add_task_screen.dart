@@ -1,19 +1,23 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_management_app/constants/data_constants.dart';
 import 'package:task_management_app/features/Add%20Task/providers/task_provider.dart';
 import 'package:task_management_app/model/task/task.dart';
 
-final selectedDateProvider = StateProvider<DateTime>(
-  (ref) => DateTime.now(),
-);
-
-final selectedOptionProvider = StateProvider<Priority?>(
-  (ref) => Priority.low,
-);
-
+@RoutePage()
 class AddTaskScreen extends ConsumerStatefulWidget {
-  const AddTaskScreen({super.key});
+  const AddTaskScreen({super.key, 
+   this.task
+  });
+
+
+ final Task? task; 
+
+
+  
+
+
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AddTaskScreenState();
@@ -24,13 +28,28 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   TextEditingController taskDescriptionController = TextEditingController();
 
   @override
+  void initState() {
+
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      ref.read(taskProvider.notifier).resetFieldsOnScreenLaunch();
+
+      
+
+    }); 
+
+   
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final selectedDate = ref.watch(selectedDateProvider);
-    final selectedOption = ref.watch(selectedOptionProvider);
+   
+    final selectedDate = ref.watch(taskProvider).selectedDate; 
+    final selectedOption = ref.watch(taskProvider).priority; 
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Task'),
+        title: widget.task!=null ? const Text('Edit Task') : const Text('Create Task'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -63,7 +82,8 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                   lastDate: DateTime(3000),
                 ).then((date) {
                   if (date != null) {
-                    ref.read(selectedDateProvider.notifier).state = date;
+                    ref.read(taskProvider.notifier).onDateSelected(date); 
+                    // ref.read(selectedDateProvider.notifier).state = date;
                   }
                 });
               },
@@ -78,7 +98,8 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                     groupValue: selectedOption,
                     activeColor: Colors.red,
                     onChanged: (Priority? value) {
-                      ref.read(selectedOptionProvider.notifier).state = value;
+                      ref.read(taskProvider.notifier).onOptionSelected(value??Priority.high);  
+                      // ref.read(selectedOptionProvider.notifier).state = value;
                     },
                   ),
                 ),
@@ -89,7 +110,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                     groupValue: selectedOption,
                     activeColor: Colors.blue,
                     onChanged: (Priority? value) {
-                      ref.read(selectedOptionProvider.notifier).state = value;
+                      ref.read(taskProvider.notifier).onOptionSelected(value??Priority.high);
                     },
                   ),
                 ),
@@ -100,7 +121,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                     groupValue: selectedOption,
                     activeColor: Colors.green,
                     onChanged: (Priority? value) {
-                      ref.read(selectedOptionProvider.notifier).state = value;
+                       ref.read(taskProvider.notifier).onOptionSelected(value??Priority.high);
                     },
                   ),
                 ),
@@ -109,15 +130,18 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                ref.read(taskProvider.notifier).addTask(
-                      taskTitleController.text,
-                      taskDescriptionController.text,
-                      selectedDate,
-                      selectedOption ?? Priority.low,
-                    );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Task added successfully!")),
-                );
+                // Task task = Task(taskId: '', 
+                // taskTitle: taskTitleController.text, 
+                // taskDesc: taskDescriptionController.text, 
+                // dueDate: selectedDate, 
+                // priority: selectedOption??Priority.low);
+
+                ref.read(taskProvider.notifier).setTaskTitleAndDescription(taskTitleController.text, taskDescriptionController.text); 
+                ref.read(taskProvider.notifier).addTask();
+
+                context.maybePop(); 
+
+                
               },
               child: const Text("Add Task"),
             ),
